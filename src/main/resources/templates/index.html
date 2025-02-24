@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список пользователей</title>
+    <script type="text/javascript" th:src="@{/js/clients/clients.js}"></script>
+</head>
+<body>
+<h2>Список пользователей</h2>
+
+<!-- Кнопка для создания нового пользователя -->
+<a href="/patients/create">
+    <button>Создать нового пользователя</button>
+</a>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Имя</th>
+        <th>Адрес</th>
+        <th>Телефон</th>
+        <th>Дата рождения</th>
+    </tr>
+    <tr th:each="patient : ${patients}">
+        <td th:text="${patient.ID}"></td>
+        <td th:text="${patient.name}"></td>
+        <td th:text="${patient.address}"></td>
+        <td th:text="${patient.telephoneNumber}"></td>
+        <td th:text="${patient.birthDate}"></td>
+        <td>
+            <a th:href="@{/patients/{id}(id=${patient.ID})}"><button>Подробнее</button></a>
+            <button type="button" th:onclick="|deleteUser('${patient.ID}')|">Удалить</button>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

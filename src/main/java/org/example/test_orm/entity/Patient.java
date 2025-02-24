@@ -4,28 +4,33 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 
 @Entity
 @Getter
 @Setter
-public class Client {
+public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long clientID;
+    private long ID;
 
     @Column(nullable = false)
-    private String clientName;
+    private String name;
 
     @Column(nullable = false)
-    private LocalDateTime birthDate;
+    private LocalDate birthDate;
 
     @Column(nullable = false, unique = true)
     private String telephoneNumber;
 
+    @Column(nullable = false)
+    private String address;     // Адрес
+
+
 //    private String gender;      // Пол
 //
-//    private String address;     // Адрес
 //
 //    private String jobPlace;    // Место работы
 //

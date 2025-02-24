@@ -15,7 +15,7 @@ public class MedicalHistory {
     private long MedicalHistoryID;
 
     @ManyToOne
-    private Client medicalHistoryOfClients;
+    private Patient medicalHistoryOfClients;
 
     @ManyToOne
     private Doctor doctorMedicalHistory;
