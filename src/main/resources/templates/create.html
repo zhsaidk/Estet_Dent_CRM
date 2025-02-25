@@ -6,14 +6,21 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/create/MaskNumber.js}"></script>
 </head>
 <body>
+
 <form th:action="@{/patients/create}" th:object="${patient}" method="post">
     <label>Имя: <input type="text" th:field="*{name}" required></label><br>
     <label>Дата рождения: <input type="date" th:field="*{birthDate}" required></label><br>
     <label>Адрес: <input type="text" th:field="*{address}" required></label><br>
-    <label>Телефон: <input type="text" th:field="*{telephoneNumber}" required></label><br>
+    <label>Телефон: <input type="tel" class="phone" placeholder="+7(___)___-__-__"
+                            th:field="*{telephoneNumber}" required></label><br>
     <button type="submit">Зарегистрироваться</button>
 </form>
 </body>
 </html>
+
+
