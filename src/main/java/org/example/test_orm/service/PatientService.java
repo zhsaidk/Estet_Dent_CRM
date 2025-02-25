@@ -4,12 +4,11 @@ import org.example.test_orm.entity.Patient;
 import org.example.test_orm.repository.PatientRepository;
 import org.springframework.stereotype.Service;
 
-
 import java.util.List;
 import java.util.Optional;
-
 @Service
 public class PatientService {
+
     private final PatientRepository patientRepository;
 
     public PatientService(PatientRepository patientRepository) {
@@ -17,7 +16,7 @@ public class PatientService {
     }
 
     public List<Patient> getPatients() {
-       return patientRepository.findAll();
+        return patientRepository.findAll();
     }
 
     public Patient getPatient(long id) {
