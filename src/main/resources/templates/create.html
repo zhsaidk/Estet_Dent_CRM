@@ -11,7 +11,7 @@
     <script type="text/javascript" th:src="@{/js/create/MaskNumber.js}"></script>
 </head>
 <body>
-
+<p><span th:text="${error_message}" id="message"></span></p>
 <form th:action="@{/patients/create}" th:object="${patient}" method="post">
     <label>Имя: <input type="text" th:field="*{name}" required></label><br>
     <label>Дата рождения: <input type="date" th:field="*{birthDate}" required></label><br>
@@ -22,5 +22,11 @@
 </form>
 </body>
 </html>
+<script>
+    let message = document.getElementById('message').innerHTML
+    if (message.length > 0) {
+        alert(message)
+    }
+</script>
 
 

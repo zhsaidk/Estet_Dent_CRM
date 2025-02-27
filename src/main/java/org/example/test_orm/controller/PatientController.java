@@ -1,5 +1,6 @@
 package org.example.test_orm.controller;
 
+import jakarta.validation.Valid;
 import org.example.test_orm.entity.Patient;
 import org.example.test_orm.service.PatientService;
 import org.springframework.stereotype.Controller;
@@ -36,7 +37,7 @@ public class PatientController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Patient patient, Model model) {
+    public String create(@Valid @ModelAttribute Patient patient, Model model) {
         patientService.createPatient(patient);
         model.addAttribute("patient", patient);
         return "redirect:/patients";

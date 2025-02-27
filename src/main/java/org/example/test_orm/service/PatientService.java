@@ -2,6 +2,7 @@ package org.example.test_orm.service;
 
 import org.example.test_orm.entity.Patient;
 import org.example.test_orm.repository.PatientRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,10 +30,16 @@ public class PatientService {
     }
 
     public void createPatient(Patient patient) {
-        Patient savedPatient = patientRepository.save(patient);
-        if (!patientRepository.existsById(savedPatient.getID())) {
-            throw new RuntimeException("Patient not saved!");
+        try {
+            patientRepository.save(patient);
+//            if (!patientRepository.existsById(savedPatient.getID())) {
+//                throw new RuntimeException("Patient not saved!");
+//            }
+        }   catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(e.getMessage());
         }
+
+
     }
 
     public void deletePatient(long id) {
