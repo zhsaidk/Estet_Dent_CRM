@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = PhoneValidator.class)
 public @interface ValidPhone {
-    String message() default "Invalid Password";
+    String message() default "Invalid phone number";
 
     Class<?>[] groups() default {};
 
