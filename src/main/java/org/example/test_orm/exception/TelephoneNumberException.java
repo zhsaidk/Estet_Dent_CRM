@@ -1,7 +1,7 @@
 package org.example.test_orm.exception;
 
 
-public class TelephoneNumberException extends CreatePatientException {
+public class TelephoneNumberException extends PatientException {
 
     public TelephoneNumberException(String message) {
         super(message);
