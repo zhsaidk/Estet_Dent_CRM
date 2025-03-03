@@ -1,8 +1,7 @@
 package org.example.test_orm.exception;
 
-import com.google.i18n.phonenumbers.NumberParseException;
 
-public class TelephoneNumberException extends RuntimeException {
+public class TelephoneNumberException extends PatientException {
 
     public TelephoneNumberException(String message) {
         super(message);

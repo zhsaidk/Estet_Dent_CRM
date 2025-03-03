@@ -1,0 +1,14 @@
+2025-02-27 15:58:43 [main] INFO  o.e.test_orm.TestOrmApplication - Starting TestOrmApplication using Java 21.0.2 with PID 8643 (/Users/samvel/My_projects/JavaProjects/Estet_Dent_CRM/target/classes started by samvel in /Users/samvel/My_projects/JavaProjects/Estet_Dent_CRM)
+2025-02-27 15:58:43 [main] INFO  o.e.test_orm.TestOrmApplication - No active profile set, falling back to 1 default profile: "default"
+2025-02-27 15:58:43 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-02-27 15:58:43 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-02-27 15:58:43 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.34]
+2025-02-27 15:58:43 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-02-27 15:58:44 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-02-27 15:58:44 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@41167ded
+2025-02-27 15:58:44 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-02-27 15:58:45 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-02-27 15:58:45 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-02-27 15:58:45 [main] INFO  o.e.test_orm.TestOrmApplication - Started TestOrmApplication in 2.443 seconds (process running for 2.77)
+2025-02-27 15:58:47 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-02-27 15:58:47 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

@@ -1,10 +1,13 @@
 package org.example.test_orm.service;
 
 import org.example.test_orm.entity.Patient;
+import org.example.test_orm.exception.CreateDataOfBirthPatientException;
+import org.example.test_orm.exception.PatientNotFoundException;
 import org.example.test_orm.repository.PatientRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 @Service
@@ -25,16 +28,17 @@ public class PatientService {
         if(optPatient.isPresent()) {
             return optPatient.get();
         }   else {
-            throw new RuntimeException("Patient not found!");
+            throw new PatientNotFoundException("Patient not found!");
         }
     }
 
     public void createPatient(Patient patient) {
         try {
-            patientRepository.save(patient);
-//            if (!patientRepository.existsById(savedPatient.getID())) {
-//                throw new RuntimeException("Patient not saved!");
-//            }
+            if(LocalDate.now().isAfter(patient.getBirthDate())) {
+                patientRepository.save(patient);
+            }   else {
+                throw new CreateDataOfBirthPatientException("The patient's date of birth cannot be later than the current date.");
+            }
         }   catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException(e.getMessage());
         }
@@ -43,7 +47,7 @@ public class PatientService {
     public void deletePatient(long id) {
         patientRepository.deleteById(id);
         if (patientRepository.existsById(id)) {
-            throw new RuntimeException("Patient not deleted!");
+            throw new PatientNotFoundException("Patient not deleted!");
         }
     }
 }
