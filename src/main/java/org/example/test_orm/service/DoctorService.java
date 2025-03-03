@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,10 +21,12 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DoctorService implements UserDetailsService {
     private final DoctorRepository doctorRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void save(Doctor doctor) {
         try{
+            doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
             doctorRepository.save(doctor);
         }
         catch (DataIntegrityViolationException e){
