@@ -38,8 +38,6 @@ public class PatientService {
         }   catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException(e.getMessage());
         }
-
-
     }
 
     public void deletePatient(long id) {
