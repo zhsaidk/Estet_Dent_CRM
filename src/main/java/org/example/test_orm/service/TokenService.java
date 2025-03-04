@@ -4,17 +4,21 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.test_orm.util.JwtTokenUtil;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class TokenService {
     private final JwtTokenUtil jwtTokenUtil;
+    @Value("${JWT_ACCESS_EXPIRATION}")
+    private final long accessTokenExpiration;
+    @Value("${JWT_REFRESH_EXPIRATION}")
+    private final long refreshTokenExpiration;
 
     public void setAuthCookies(HttpServletResponse response, String username) {
-        String accessToken = jwtTokenUtil.generateAccessToken(username);
-        String refreshToken = jwtTokenUtil.generateRefreshToken(username);
+        String accessToken = jwtTokenUtil.generateToken(username, accessTokenExpiration);
+        String refreshToken = jwtTokenUtil.generateToken(username, refreshTokenExpiration);
 
         Cookie accessCookie = new Cookie("access_token", accessToken);
         accessCookie.setHttpOnly(true);

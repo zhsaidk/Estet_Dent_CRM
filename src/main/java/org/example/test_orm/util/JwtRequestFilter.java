@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +25,8 @@ import java.io.IOException;
 public class JwtRequestFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserDetailsService userDetailsService;
-
+    @Value("${JWT_ACCESS_EXPIRATION}")
+    private final long accessTokenExpiration;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -55,7 +57,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 if (refreshToken != null) {
                     try {
                         String username = jwtTokenUtil.getUsernameFromToken(refreshToken);
-                        String newAccessToken = jwtTokenUtil.generateAccessToken(username);
+                        String newAccessToken = jwtTokenUtil.generateToken(username, accessTokenExpiration);
 
                         Cookie newAccessCookie = new Cookie("access_token", newAccessToken);
                         newAccessCookie.setHttpOnly(true);

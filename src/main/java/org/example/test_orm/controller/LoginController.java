@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,28 +33,12 @@ public class LoginController {
     private final TokenService tokenService;
 
     @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
-    @PostMapping("/login")
-    public String processLogin(@RequestParam String username,
-                               @RequestParam String password,
-                               HttpServletResponse response,
-                               RedirectAttributes redirectAttributes) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password)
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            tokenService.setAuthCookies(response, username);
-
-            return "redirect:/patients";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Неверные учетные данные");
-            return "redirect:login";
+    public String login(@RequestParam(value = "error", required = false) String error,
+                        Model model) {
+        if (error!=null){
+            model.addAttribute("error", "Неверные учетные данные");
         }
+        return "login";
     }
 
     @GetMapping("/logout")
@@ -76,10 +61,19 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             return "redirect:/register";
-        } else {
-            doctorService.save(doctor);
-            redirectAttributes.addFlashAttribute("message", "Registration successful, please sign in");
-            return "redirect:/login";
         }
+
+        String errorMessage = doctorService.existsByEmail(doctor.getEmail()) ? "Пользователь с таким email уже существует"
+                : doctorService.existsByLogin(doctor.getLogin()) ? "Пользователь с таким логином уже существует"
+                : null;
+
+        if (errorMessage != null){
+            redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
+            return "redirect:/register";
+        }
+
+        doctorService.save(doctor);
+        redirectAttributes.addFlashAttribute("message", "Registration successful, please sign in");
+        return "redirect:/login";
     }
 }

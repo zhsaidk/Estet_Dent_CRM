@@ -9,6 +9,11 @@
         <div th:each="error : ${errors}">
             <span style="color: red" th:text="${error.getDefaultMessage}"></span><br/>
         </div>
+
+        <div th:if="${errorMessage}">
+            <span style="color: red" th:text="${errorMessage}"></span><br/>
+        </div>
+
         <label for="doctorName">Your name
             <input type="text" name="doctorName" id="doctorName">
         </label><br/>

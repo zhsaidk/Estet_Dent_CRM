@@ -3,6 +3,8 @@ package org.example.test_orm.util;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -12,29 +14,23 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenUtil {
-    private final String secret = "1CS7ksFr6i5Ccj0u8WBXq671dDmjBlp4mvScKmP35cc=";
+    @Value("${JWT_SECRET}")
+    private final String secret;
 
-    SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    SecretKey key;
 
-    private final long accessTokenExpiration = 15*1000; //15 секунд
-
-    private final long refreshTokenExpiration = 60*1000; //60 секунд
-
-    public String generateAccessToken(String username) {
-        return Jwts.builder()
-                .subject(username)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
-                .signWith(key)
-                .compact();
+    @PostConstruct
+    public void init(){
+        key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateRefreshToken(String username) {
+    public String generateToken(String username, Long expiration) {
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
+                .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)
                 .compact();
     }

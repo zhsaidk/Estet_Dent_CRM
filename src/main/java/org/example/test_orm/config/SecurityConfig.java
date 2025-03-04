@@ -44,10 +44,8 @@ public class SecurityConfig {
                             tokenService.setAuthCookies(response, username);
                             response.sendRedirect("/patients");
                         })
-                        .failureHandler((request, response, exception) -> {
-                            request.getSession().setAttribute("error", exception.getMessage());
-                            response.sendRedirect("/login");
-                        }))
+                        .failureUrl("/login?error=true")
+                        .permitAll())
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
