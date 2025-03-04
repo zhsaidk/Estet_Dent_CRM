@@ -2,11 +2,9 @@ package org.example.test_orm.controller_advice;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.test_orm.entity.Patient;
-import org.example.test_orm.exception.CreateDataOfBirthPatientException;
-import org.example.test_orm.exception.PatientException;
-import org.example.test_orm.exception.PatientNotFoundException;
-import org.example.test_orm.exception.TelephoneNumberException;
+import org.example.test_orm.exception.*;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,8 +42,18 @@ public class Advice {
         return "redirect:/patients";
     }
 
+    @ExceptionHandler(DuplicateDoctorException.class)
+    public String duplicateDoctor(DuplicateDoctorException e, RedirectAttributes redirectAttributes){
+        log.warn(e.getClass().toString(), e);
+        redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        return "redirect:/register";
+    }
 
-
-
+    @ExceptionHandler(DoctorSaveException.class)
+    public String doctorSave(DoctorSaveException e, RedirectAttributes redirectAttributes){
+        log.warn(e.getClass().toString(), e);
+        redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        return "redirect:/register";
+    }
 
 }
