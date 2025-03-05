@@ -11,29 +11,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TokenService {
     private final JwtTokenUtil jwtTokenUtil;
-    @Value("${JWT_ACCESS_EXPIRATION}")
-    private final long accessTokenExpiration;
-    @Value("${JWT_REFRESH_EXPIRATION}")
-    private final long refreshTokenExpiration;
+
+    @Value("${COOKIE_ACCESS_TOKEN_MAX_AGE}")
+    private final int COOKIE_ACCESS_TOKEN_MAX_AGE;
+
+    @Value("${COOKIE_REFRESH_TOKEN_MAX_AGE}")
+    private final int COOKIE_REFRESH_TOKEN_MAX_AGE;
 
     public void setAuthCookies(HttpServletResponse response, String username) {
-        String accessToken = jwtTokenUtil.generateToken(username, accessTokenExpiration);
-        String refreshToken = jwtTokenUtil.generateToken(username, refreshTokenExpiration);
+        String accessToken = jwtTokenUtil.generateAccessToken(username);
+        String refreshToken = jwtTokenUtil.generateRefreshToken(username);
 
-        Cookie accessCookie = new Cookie("access_token", accessToken);
-        accessCookie.setHttpOnly(true);
-        accessCookie.setSecure(true);
-        accessCookie.setPath("/");
-        accessCookie.setMaxAge(3600);
-
-        Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(true);
-        refreshCookie.setPath("/");
-        refreshCookie.setMaxAge(604800);
-
-        response.addCookie(accessCookie);
-        response.addCookie(refreshCookie);
+        response.addCookie(createCookie("access_token", accessToken, COOKIE_ACCESS_TOKEN_MAX_AGE));
+        response.addCookie(createCookie("refresh_token", refreshToken, COOKIE_REFRESH_TOKEN_MAX_AGE));
     }
 
     public void clearAuthCookies(HttpServletResponse response) {
@@ -47,5 +37,14 @@ public class TokenService {
 
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
+    }
+
+    private Cookie createCookie(String cookieName, String token, int expires) {
+        Cookie cookie = new Cookie(cookieName, token);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(expires);
+        return cookie;
     }
 }

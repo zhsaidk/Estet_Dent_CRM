@@ -1,22 +1,18 @@
 package org.example.test_orm.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.test_orm.entity.Doctor;
 import org.example.test_orm.exception.DoctorSaveException;
 import org.example.test_orm.exception.DuplicateDoctorException;
 import org.example.test_orm.repository.DoctorRepository;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -30,7 +26,7 @@ public class DoctorService implements UserDetailsService {
             doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
             doctorRepository.save(doctor);
         }
-        catch (DataIntegrityViolationException e){ // Нужно установить constraint unique в таблицу
+        catch (DataIntegrityViolationException e) {
             throw new DuplicateDoctorException("Логин или почта уже существует");
         }
         catch(Exception e){

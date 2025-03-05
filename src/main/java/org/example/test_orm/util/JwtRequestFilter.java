@@ -7,8 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,8 +23,6 @@ import java.io.IOException;
 public class JwtRequestFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserDetailsService userDetailsService;
-    @Value("${JWT_ACCESS_EXPIRATION}")
-    private final long accessTokenExpiration;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -37,44 +33,44 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String accessToken = null;
         String refreshToken = null;
 
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("access_token".equals(cookie.getName())) {
-                    accessToken = cookie.getValue();
-                } else if ("refresh_token".equals(cookie.getName())) {
-                    refreshToken = cookie.getValue();
-                }
-            }
+        for (Cookie cookie : cookies) {
+            log.info("Cookie name = {}", cookie.getName());
+            log.info("Cookie value = {}", cookie.getValue());
+//            if ("access_token".equals(cookie.getName())) {
+//                accessToken = cookie.getValue();
+//            } else if ("refresh_token".equals(cookie.getName())) {
+//                refreshToken = cookie.getValue();
+//            }
         }
 
-        if (accessToken != null) {
-            try {
-                String username = jwtTokenUtil.getUsernameFromToken(accessToken);
-                authenticateUser(username, request);
-            } catch (Exception e) {
-                log.warn("Access token is invalid or expired: {}", e.getMessage());
-
-                if (refreshToken != null) {
-                    try {
-                        String username = jwtTokenUtil.getUsernameFromToken(refreshToken);
-                        String newAccessToken = jwtTokenUtil.generateToken(username, accessTokenExpiration);
-
-                        Cookie newAccessCookie = new Cookie("access_token", newAccessToken);
-                        newAccessCookie.setHttpOnly(true);
-                        newAccessCookie.setPath("/");
-                        response.addCookie(newAccessCookie);
-
-                        authenticateUser(username, request);
-
-                    } catch (Exception ex) {
-                        log.warn("Refresh token is invalid or expired: {}", ex.getMessage());
-                        clearCookies(response);
-                    }
-                } else {
-                    clearCookies(response);
-                }
-            }
-        }
+//        if (accessToken != null) {
+//            try {
+//                String username = jwtTokenUtil.getUsernameFromToken(accessToken);
+//                authenticateUser(username, request);
+//            } catch (Exception e) {
+//                log.warn("Access token is invalid or expired: {}", e.getMessage());
+//
+//                if (refreshToken != null) {
+//                    try {
+//                        String username = jwtTokenUtil.getUsernameFromToken(refreshToken);
+//                        String newAccessToken = jwtTokenUtil.generateAccessToken(username);
+//
+//                        Cookie newAccessCookie = new Cookie("access_token", newAccessToken);
+//                        newAccessCookie.setHttpOnly(true);
+//                        newAccessCookie.setPath("/");
+//                        response.addCookie(newAccessCookie);
+//
+//                        authenticateUser(username, request);
+//
+//                    } catch (Exception ex) {
+//                        log.warn("Refresh token is invalid or expired: {}", ex.getMessage());
+//                        clearCookies(response);
+//                    }
+//                } else {
+//                    clearCookies(response);
+//                }
+//            }
+//        }
 
         chain.doFilter(request, response);
     }
