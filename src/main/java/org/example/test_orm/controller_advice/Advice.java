@@ -1,16 +1,20 @@
 package org.example.test_orm.controller_advice;
 
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.example.test_orm.entity.Patient;
 import org.example.test_orm.exception.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
+
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 
 @ControllerAdvice
 @Slf4j
@@ -25,6 +29,12 @@ public class Advice {
         String showMessage = "Поле: " + errorMessage.substring(start, last) + " уже есть!";
         redirectAttributes.addFlashAttribute("error_message", showMessage);
         return "redirect:/patients/create";
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public String qwe(JwtException e) {
+        log.warn(e.getClass().toString(), e);
+        return "redirect:/login";
     }
 
 

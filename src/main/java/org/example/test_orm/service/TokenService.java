@@ -1,50 +1,66 @@
 package org.example.test_orm.service;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import org.example.test_orm.util.JwtTokenUtil;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-@RequiredArgsConstructor
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+
+import static javax.crypto.Cipher.SECRET_KEY;
+
+
+@Component
 public class TokenService {
-    private final JwtTokenUtil jwtTokenUtil;
+    @Value("${JWT_SECRET}")
+    private String secret;
+    @Value("${JWT_ACCESS_EXPIRATION}")
+    private long accessToken;
+    @Value("${JWT_REFRESH_EXPIRATION}")
+    private long refreshToken;
 
-    @Value("${COOKIE_ACCESS_TOKEN_MAX_AGE}")
-    private final int COOKIE_ACCESS_TOKEN_MAX_AGE;
+    private SecretKey key;
 
-    @Value("${COOKIE_REFRESH_TOKEN_MAX_AGE}")
-    private final int COOKIE_REFRESH_TOKEN_MAX_AGE;
-
-    public void setAuthCookies(HttpServletResponse response, String username) {
-        String accessToken = jwtTokenUtil.generateAccessToken(username);
-        String refreshToken = jwtTokenUtil.generateRefreshToken(username);
-
-        response.addCookie(createCookie("access_token", accessToken, COOKIE_ACCESS_TOKEN_MAX_AGE));
-        response.addCookie(createCookie("refresh_token", refreshToken, COOKIE_REFRESH_TOKEN_MAX_AGE));
+    @PostConstruct
+    public void init(){
+        key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public void clearAuthCookies(HttpServletResponse response) {
-        Cookie accessCookie = new Cookie("access_token", null);
-        accessCookie.setMaxAge(0);
-        accessCookie.setPath("/");
-
-        Cookie refreshCookie = new Cookie("refresh_token", null);
-        refreshCookie.setMaxAge(0);
-        refreshCookie.setPath("/");
-
-        response.addCookie(accessCookie);
-        response.addCookie(refreshCookie);
+    public String generateAccessToken(String username) {
+        return generateToken(username,  accessToken * 1000);    // Умножение для преобразования времени в секунды
     }
 
-    private Cookie createCookie(String cookieName, String token, int expires) {
-        Cookie cookie = new Cookie(cookieName, token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(expires);
-        return cookie;
+    public String generateRefreshToken(String username) {
+        return generateToken(username, refreshToken * 1000);    // Умножение для преобразования времени в секунды
+    }
+
+     private String generateToken(String username, long expiration) {
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(key)
+                .compact();
+    }
+
+    public String parseToken(String token) {
+        try {
+            return Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
+        }   catch (ExpiredJwtException e) {
+            throw new ExpiredJwtException(e.getHeader(), e.getClaims(), e.getMessage());
+        }   catch (JwtException e) {
+            throw new JwtException(e.getMessage(), e);
+        }
     }
 }

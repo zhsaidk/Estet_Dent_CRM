@@ -16,7 +16,7 @@ public class Doctor {
     private long doctorID;
 
     @NotBlank(message = "Name is required")
-    private String doctorName;
+    private String name;
 
     @NotBlank(message = "Login is required")
     @Column(unique = true)

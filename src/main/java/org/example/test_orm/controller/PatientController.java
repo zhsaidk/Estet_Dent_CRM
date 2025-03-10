@@ -21,7 +21,7 @@ public class PatientController {
     @GetMapping
     public String getAllPatients(Model model) {
         model.addAttribute("patients", patientService.getPatients());
-        return "index";
+        return "patients";
     }
 
     @GetMapping("/{id}")
@@ -46,7 +46,7 @@ public class PatientController {
     @DeleteMapping("/{id}")
     public String delete(@PathVariable long id) {
         patientService.deletePatient(id);
-        return "index";
+        return "patients";
     }
 
 }
