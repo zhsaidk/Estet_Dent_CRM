@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Создать материал</title>
+</head>
+<body>
+    <form th:action="@{/materials/create}" method="post">
+        <div th:each="error : ${errors}">
+            <span style="color: red" th:text="${error.getDefaultMessage}"></span><br/>
+        </div>
+
+        <div th:if="${errorMessage}">
+            <span style="color: red" th:text="${errorMessage}"></span><br/>
+        </div>
+
+        <div th:if="${message}">
+            <span style="color: green" th:text="${message}"></span><br/>
+        </div><br/>
+
+        <label for="name">Название
+            <input type="text" name="name" id="name">
+        </label><br/>
+
+        <label for="producer">Производитель
+            <select name="producer" id="producer">
+                <option value="">Выберите производителя</option>
+                <option th:each="producer : ${producers}" th:text="${producer.name}" th:value="${producer.id}">DummyText</option>
+            </select>
+        </label><br/>
+
+        <label for="count">Количество
+            <input type="text" name="count" id="count">
+        </label><br/>
+
+        <label for="price">Цена
+            <input type="text" name="price" id="price">
+        </label><br/>
+        <button type="submit">Создать</button>
+    </form><br/>
+    <a href="/materials/producer/add"><button type="submit">Добавить производителя</button></a>
+    <a href="/materials"><button type="submit">Назад</button></a>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport">
+    <title>Document</title>
+</head>
+    <body>
+        <span th:text="|Имя: ${patient.name}|"></span><br/>
+        <span th:text="|Дата рождение: ${patient.getBirthDate()}|"></span><br/>
+        <span th:text="|Телефон: ${patient.getTelephoneNumber()}|"></span><br/><br/>
+
+        <div th:if="${histories}" th:each="history : ${histories}">
+            <span th:text="|Имя доктора: ${history.getDoctorMedicalHistory().getDoctorName()}|"></span><br/>
+            <span th:text="|Причина обращение: ${history.getComplaints()}|"></span><br/>
+            <span th:text="|Дата обращение: ${history.getDate()}|"></span><br/><br/>
+        </div><br/>
+
+        <a th:href="@{/history/create/{id}(id = ${patient.getID()})}"><button>Создать историю</button></a>
+
+    </body>
+</html>
+

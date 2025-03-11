@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Страница удаление производителя</title>
+</head>
+<body>
+    <div th:if="${message}">
+        <p style="font-size: medium; color: green" th:text="${message}"></p>
+    </div>
+
+    <div th:if="${errorMessage}">
+        <span style="color: red" th:text="${errorMessage}"></span><br/>
+    </div><br/>
+
+    <form th:action="@{/materials/producer/delete}" method="post">
+        <label for="producerId">Производитель
+            <select name="producerId" id="producerId">
+                <option value="">Выберите производителя</option>
+                <option th:each="producer : ${producers}" th:text="${producer.name}" th:value="${producer.id}">DummyText</option>
+            </select>
+        </label>
+        <button type="submit">Удалить</button>
+    </form><br/>
+    <a href="/materials/producer/add"><button type="submit">Назад</button></a>
+</body>
+</html>

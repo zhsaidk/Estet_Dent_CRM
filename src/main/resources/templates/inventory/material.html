@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Изменить материал</title>
+</head>
+<body>
+    <form th:action="@{/materials/{id}(id = ${material.id})}" method="post">
+        <div th:each="error : ${errors}">
+            <span style="color: red" th:text="${error.getDefaultMessage}"></span><br/>
+        </div>
+
+        <div th:if="${errorMessage}">
+            <span style="color: red" th:text="${errorMessage}"></span><br/>
+        </div>
+
+        <label for="name">Название
+            <input type="text" name="name" id="name" th:value="${material.name}">
+        </label><br/>
+
+        <label for="producer">Производитель
+            <select name="producer" id="producer">
+                <option th:each="producer : ${producers}" th:text="${producer.name}" th:value="${producer.id}" th:selected="${producer.id == material.producer.id}">DummyText</option>
+            </select>
+        </label><br/>
+
+        <label for="count">Количество
+            <input type="text" name="count" id="count" th:value="${material.count}">
+        </label><br/>
+
+        <label for="price">Цена
+            <input type="text" name="price" id="price" th:value="${material.price}">
+        </label><br/>
+        <button type="submit">Изменить</button>
+    </form><br/>
+    <a href="/materials"><button type="submit">Отменить</button></a>
+    <form th:action="@{/materials/delete/{id}(id = ${material.id})}" method="post">
+        <button type="submit">Удалить</button>
+    </form>
+
+</body>
+</html>

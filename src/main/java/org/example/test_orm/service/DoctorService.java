@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -57,4 +58,7 @@ public class DoctorService implements UserDetailsService {
                 ))
                 .orElseThrow(()->new UsernameNotFoundException("User not found " + emailOrUsername));
     }
+    public List<Doctor> getAll(){
+        return doctorRepository.findAll();
+    };
 }

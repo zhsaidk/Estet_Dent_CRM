@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Refill page</title>
+</head>
+    <body>
+        <p style="font-size: large">Страница создание производителя</p>
+        <div th:if="${errors}">
+            <p th:each="error: ${errors}" style="font-size: medium; color: red" th:text="${error.getDefaultMessage()}"></p>
+        </div>
+        <div th:if="${errorMessage}">
+            <span style="color: red" th:text="${errorMessage}"></span><br/>
+        </div><br/>
+        <div th:if="${message}">
+            <p style="font-size: medium; color: green" th:text="${message}"></p>
+        </div>
+
+        <form th:action="@{/materials/producer/add}" method="post">
+            <label for="name">Название производителя
+                <input type="text" name="name" id="name" placeholder="Название производителя">
+            </label><br/><br/>
+            <button type="submit">Создать</button>
+        </form><br/>
+        <a href="/materials"><button>Назад</button></a>
+        <a href="/materials/producer/delete"><button>Страница удаление</button></a>
+    </body>
+</html>

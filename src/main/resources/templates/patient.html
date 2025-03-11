@@ -14,5 +14,6 @@
     <p>Адрес: <span th:text="${patient.address}"></span></p>
     <p>Телефон: <span th:text="${patient.telephoneNumber}"></span></p>
 <a href="/patients"><button>Вернутся</button></a>
+<a th:href="@{/history/{id}(id = ${patient.getID()})}"><button>История лечение</button></a>
 </body>
 </html>

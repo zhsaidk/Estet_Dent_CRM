@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport">
+    <title>Document</title>
+</head>
+    <body>
+        <span th:if="${errors}" style="color: red" th:each="error: ${errors}" th:text="${error.getDefaultMessage}"></span><br/>
+
+        <form th:action="@{/history/create}" method="post">
+            <input type="hidden" name="medicalHistoryOfClients" id="patient" th:value="${currentPatientId}">
+
+            <label for="doctor">Выберите доктора
+                <select name="doctorMedicalHistory" id="doctor">
+                    <option th:each="doctor : ${doctors}" th:text="${doctor.getDoctorName()}" th:value="${doctor.getDoctorID()}"></option>
+                </select>
+            </label><br/>
+
+            <label for="complaints"> Причина обращение
+                <input type="text" name="complaints" id="complaints">
+            </label><br/>
+
+            <label for="date"> Дата
+                <input type="date" name="date" id="date">
+            </label><br/>
+
+            <button type="submit">Создать</button>
+        </form>
+    </body>
+</html>
+

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Refill page</title>
+</head>
+    <body>
+        <p style="font-size: large">Страница пополнение запасов</p>
+        <div th:if="${message}">
+            <p style="font-size: medium; color: green" th:text="${message}"></p>
+        </div>
+        <div th:if="${errorMessage}">
+            <span style="color: red" th:text="${errorMessage}"></span><br/>
+        </div><br/>
+        <form th:action="@{/materials/refill/{id}(id = ${material.id})}" method="post">
+            <label for="count">Количество
+                <input type="text" name="count" id="count" th:value="${material.count}"> шт
+            </label><br/><br/>
+            <button type="submit">Сохранить</button>
+        </form><br/>
+        <a href="/materials"><button>Назад</button></a>
+    </body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список материалов</title>
+</head>
+    <body>
+        <h2>Список материалов</h2>
+
+        <form th:action="@{/materials/search}" method="get">
+            <label for="word">
+                <input type="text" name="word" id="word" placeholder="Поиск материалов"/>
+            </label>
+            <button type="submit">Искать</button>
+        </form>
+
+        <a href="/materials/create">
+            <button>Создать новый материал</button>
+        </a><br/><br/>
+
+        <table>
+            <tr>
+                <th>Позиция</th>
+                <th>Название</th>
+                <th>Производитель</th>
+                <th>Количество</th>
+                <th>Цена</th>
+            </tr>
+            <tr th:each="material : ${materials}">
+                <td th:text="${material.id}"></td>
+                <td th:text="${material.name}"></td>
+                <td th:text="${material.producer.name}"></td>
+                <td th:text="|${material.count} шт|"></td>
+                <td th:text="|${material.price} тг|"></td>
+                <td><a th:href="@{/materials/{id}(id = ${material.id})}"><button type="submit">Изменить</button></a></td>
+                <td><a th:href="@{/materials/refill/{id}(id = ${material.id})}"><button type="submit">Пополнить</button></a></td>
+            </tr>
+        </table><br/>
+        <form action="/materials/filter" method="get">
+            <label for="producer">Производитель</label>
+            <select name="producerId" id="producer">
+                <option value="">Выберите производителя</option>
+                <option th:each="producer : ${producers}" th:value="${producer.id}" th:text="${producer.name}"></option>
+            </select><br/>
+
+            <label for="minPrice">Цена от:</label>
+            <input type="number" name="minPrice" id="minPrice" step="0.01"><br/>
+
+            <label for="maxPrice">Цена до:</label>
+            <input type="number" name="maxPrice" id="maxPrice" step="0.01"><br/>
+
+            <label for="minCount">Количество от:</label>
+            <input type="number" name="minCount" id="minCount"><br/>
+
+            <label for="maxCount">Количество до:</label>
+            <input type="number" name="maxCount" id="maxCount"><br/>
+
+            <button type="submit">Фильтровать</button>
+        </form>
+
+
+    </body>
+</html>
