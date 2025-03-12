@@ -1,6 +1,7 @@
 package org.example.test_orm.config;
 
 import lombok.RequiredArgsConstructor;
+import org.example.test_orm.controller_advice.CustomAuthenticationFailureHandler;
 import org.example.test_orm.service.TokenService;
 import org.example.test_orm.util.JwtRequestFilter;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,7 @@ public class SecurityConfig {
     private final JwtRequestFilter jwtRequestFilter;
     private final AuthenticationProvider authenticationProvider;
     private final TokenService tokenService;
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
     @Bean
     public AuthenticationManager authenticationManager(){
@@ -36,7 +38,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/login", "/register", "/logout").permitAll()
+                        .requestMatchers("/login", "/js/**", "/css/**","/register", "/logout").permitAll()
                         .requestMatchers("/patients/**", "/materials/**", "/refill/**",  "/history/**").hasAuthority("DOCTOR"))
                 .formLogin(login->login.loginPage("/login")
                         .defaultSuccessUrl("/patients")
@@ -45,7 +47,7 @@ public class SecurityConfig {
                             tokenService.setAuthCookies(response, username);
                             response.sendRedirect("/patients");
                         })
-                        .failureUrl("/login?error=true")
+                        .failureHandler(customAuthenticationFailureHandler)
                         .permitAll())
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

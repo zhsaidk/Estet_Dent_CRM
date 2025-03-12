@@ -25,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 @Controller
 @RequiredArgsConstructor
 public class LoginController {
@@ -34,12 +37,15 @@ public class LoginController {
 
     @GetMapping("/login")
     public String login(@RequestParam(value = "error", required = false) String error,
+                        @RequestParam(value = "username", required = false) String username,
                         Model model) {
         if (error!=null){
             model.addAttribute("error", "Неверные учетные данные");
+            model.addAttribute("username", username);
         }
         return "login";
     }
+
 
     @GetMapping("/logout")
     public String logout(HttpServletResponse response) {
@@ -68,12 +74,11 @@ public class LoginController {
                 : null;
 
         if (errorMessage != null){
-            redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
-            return "redirect:/register";
+            return "redirect:/register?error=" + URLEncoder.encode(errorMessage, StandardCharsets.UTF_8);
         }
 
         doctorService.save(doctor);
         redirectAttributes.addFlashAttribute("message", "Registration successful, please sign in");
-        return "redirect:/login";
+        return "redirect:/login?message=" + URLEncoder.encode("Registration successful, please sign in", StandardCharsets.UTF_8);
     }
 }
