@@ -13,6 +13,7 @@ public class Token {
     public Token(String accessToken , String refreshToken) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+//        this.doctor = doctor;
     }
 
     @Id
@@ -21,8 +22,12 @@ public class Token {
 
     @Transient
     private String accessToken;
-
+    @Column(unique = true)
     private String refreshToken;
+
+//    @ManyToOne()
+//    @JoinColumn(name = "user_id")
+//    private Doctor doctor;
 
 
 }

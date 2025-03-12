@@ -26,19 +26,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    private final CookieService cookieService;
 
     @GetMapping("/login")
-    public String loginPage(@RequestParam(value = "error", required = false) String error, Model model) {
+    public String loginPage(@RequestParam(value = "error_message", required = false) String error, Model model) {
         if (error!=null){
-            model.addAttribute("error", "Неверные учетные данные");
+            model.addAttribute("error_message", "Неверные учетные данные");
         }
         return "login";
     }
 
     @GetMapping("/logout")
     public String logout(HttpServletResponse response) {
-        cookieService.clearTokenCookie(response);
+        authService.clearTokenCookie(response);
         return "login";
     }
 
@@ -51,7 +50,6 @@ public class AuthController {
     public String registration(@Valid Doctor doctor,
                                BindingResult bindingResult,
                                RedirectAttributes redirectAttributes) {
-
         if (!bindingResult.hasErrors()) {
             authService.save(doctor);
             return "redirect:/login";
@@ -59,18 +57,7 @@ public class AuthController {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             return "redirect:/register";
         }
-//
-//        String errorMessage = doctorService.existsByEmail(doctor.getEmail()) ? "Пользователь с таким email уже существует"
-//                : doctorService.existsByLogin(doctor.getLogin()) ? "Пользователь с таким логином уже существует"
-//                : null;
-//
-//        if (errorMessage != null){
-//            redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
-//            return "redirect:/register";
-//        }
-//
-//        doctorService.save(doctor);
-//        redirectAttributes.addFlashAttribute("message", "Registration successful, please sign in");
-//        return "redirect:/login";
+
+
     }
 }

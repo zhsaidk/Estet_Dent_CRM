@@ -5,15 +5,12 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-import static javax.crypto.Cipher.SECRET_KEY;
 
 
 @Component
@@ -40,9 +37,9 @@ public class TokenService {
         return generateToken(username, refreshToken * 1000);    // Умножение для преобразования времени в секунды
     }
 
-     private String generateToken(String username, long expiration) {
+     private String generateToken(String userID, long expiration) {
         return Jwts.builder()
-                .subject(username)
+                .subject(userID)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)

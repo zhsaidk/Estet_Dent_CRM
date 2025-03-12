@@ -1,5 +1,6 @@
 package org.example.test_orm.util;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -7,9 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.test_orm.entity.Doctor;
 import org.example.test_orm.entity.Token;
-import org.example.test_orm.service.CookieService;
-import org.example.test_orm.service.TokenService;
+import org.example.test_orm.service.AuthService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,43 +24,52 @@ import java.util.*;
 @Slf4j
 @RequiredArgsConstructor
 public class AuthFilter extends OncePerRequestFilter {
-    private final UserDetailsService userDetailsService;
-    private final TokenService tokenService;
-    private final CookieService cookieService;
+    private final static String ACCESS_TOKEN = "access_token";
+    private final static String REFRESH_TOKEN = "refresh_token";
 
-    private static final List<String> MANE_OF_TOKENS = Arrays.asList("access_token", "refresh_token");
+    private final UserDetailsService userDetailsService;
+    private final AuthService authService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
+        Map<String, String> mapOfCookie = setCookieIfExist(request.getCookies());
+        try {
+            if (mapOfCookie.containsKey(ACCESS_TOKEN)) {
+                String userId = authService.parseToken((mapOfCookie.get(ACCESS_TOKEN)));
+                log.info("userID from {} = {}", ACCESS_TOKEN, userId);
+                authenticateUser(userId, request);
+            }   else if(mapOfCookie.containsKey(REFRESH_TOKEN)) {
+                String userId = authService.parseToken(REFRESH_TOKEN);
+//                Doctor doc = authService.getDoctorById(userId);
+                log.info("userID from {} = {}", REFRESH_TOKEN, userId);
+                Token token = new Token(authService.generateAccessToken(userId),
+                        authService.generateRefreshToken(userId));
+//                authService.saveRefreshToken(token);
+                authService.setAuthCookies(response, token);
+                authenticateUser(userId, request);
+            }
+            filterChain.doFilter(request, response);
+        }   catch (JwtException e) {
+            log.info("Invalid JWT token");
+            request.setAttribute("error_message", "Доступ запрещен: неверный JWT токен.");
+            request.getRequestDispatcher("/logout").forward(request, response);
+        }
+    }
+    private Map<String, String> setCookieIfExist(Cookie[] cookies) {
         Map<String, String> map = new HashMap<>();
-        Cookie[] cookies = request.getCookies();
-
-        if(cookies == null) {
+        if (cookies == null) {
             log.info("Cookies is null");
-        }   else {
-            for(Cookie cookie: cookies) {
+        } else {
+            for (Cookie cookie : cookies) {
                 String cookieName = cookie.getName();
-                if(MANE_OF_TOKENS.contains(cookie.getName())) {
+                if (ACCESS_TOKEN.equals(cookie.getName()) || REFRESH_TOKEN.equals(cookie.getName())) {
                     map.put(cookieName, cookie.getValue());
                 }
             }
-            if (map.containsKey(MANE_OF_TOKENS.get(0))) {
-                String username = tokenService.parseToken((map.get(MANE_OF_TOKENS.get(0))));
-                log.info("username from access_token = {}", username);
-                authenticateUser(username, request);
-
-            }   else if(map.containsKey(MANE_OF_TOKENS.get(1))) {
-                String username = tokenService.parseToken((map.get(MANE_OF_TOKENS.get(1))));
-                log.info("username from refresh_token= {}", username);
-                cookieService.setAuthCookies(response, new Token(tokenService.generateAccessToken(username), tokenService.generateRefreshToken(username)));
-                authenticateUser(username, request);
-            }
         }
-        filterChain.doFilter(request, response);
+        return map;
     }
-
 
     private void authenticateUser(String username, HttpServletRequest request) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);

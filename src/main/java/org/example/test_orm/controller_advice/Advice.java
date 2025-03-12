@@ -1,20 +1,11 @@
 package org.example.test_orm.controller_advice;
 
-import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
-import org.example.test_orm.entity.Patient;
 import org.example.test_orm.exception.*;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
-
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 
 @ControllerAdvice
 @Slf4j
@@ -23,20 +14,9 @@ public class Advice {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public String errorMessageFromDataBase(DataIntegrityViolationException e, RedirectAttributes redirectAttributes) {
         log.warn(e.getClass().toString(), e);
-        String errorMessage = e.getMessage();
-        int start = errorMessage.indexOf("(") + 1;
-        int last = errorMessage.indexOf(")");
-        String showMessage = "Поле: " + errorMessage.substring(start, last) + " уже есть!";
-        redirectAttributes.addFlashAttribute("error_message", showMessage);
+        redirectAttributes.addFlashAttribute("error_message",  messageForDuplicateException(e.getMessage()));
         return "redirect:/patients/create";
     }
-
-    @ExceptionHandler(JwtException.class)
-    public String qwe(JwtException e) {
-        log.warn(e.getClass().toString(), e);
-        return "redirect:/login";
-    }
-
 
     @ExceptionHandler(value = {CreateDataOfBirthPatientException.class, TelephoneNumberException.class})
     public String errorMessageFromCreatePatient(PatientException e,  RedirectAttributes redirectAttributes) {
@@ -55,15 +35,21 @@ public class Advice {
     @ExceptionHandler(DuplicateDoctorException.class)
     public String duplicateDoctor(DuplicateDoctorException e, RedirectAttributes redirectAttributes){
         log.warn(e.getClass().toString(), e);
-        redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        redirectAttributes.addFlashAttribute("error_message", messageForDuplicateException(e.getMessage()));
         return "redirect:/register";
     }
 
     @ExceptionHandler(DoctorSaveException.class)
     public String doctorSave(DoctorSaveException e, RedirectAttributes redirectAttributes){
         log.warn(e.getClass().toString(), e);
-        redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        redirectAttributes.addFlashAttribute("error_message", e.getMessage());
         return "redirect:/register";
+    }
+
+    private String messageForDuplicateException(String error) {
+        int start = error.indexOf("(") + 1;
+        int last = error.indexOf(")");
+        return "Поле: " + error.substring(start, last) + " уже существует!";
     }
 
 }

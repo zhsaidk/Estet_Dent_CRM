@@ -6,7 +6,7 @@
 </head>
 <body>
     <form th:action="@{/login}" method="post">
-        <h4 style="color: red" th:if="${error}" th:text="${error}"></h4>
+        <h4 style="color: red" th:if="${error_message}" th:text="${error_message}"></h4>
         <label for="Login">Login
             <input type="text" name="username" id="Login">
         </label><br/>
