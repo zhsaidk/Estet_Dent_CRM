@@ -167,7 +167,7 @@ public class MaterialController {
         return "redirect:/materials/producer/delete";
     }
 
-    @GetMapping("/filter")
+    @PostMapping("/filter")
     public String filter(@RequestParam(value = "producerId", required = false) Integer producerId,
                          @RequestParam(value = "minPrice", required = false) BigDecimal minPrice,
                          @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice,

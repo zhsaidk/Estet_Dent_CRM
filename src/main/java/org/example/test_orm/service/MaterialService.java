@@ -27,11 +27,8 @@ public class MaterialService {
         newMaterial.setPrice(newMaterial.getPrice());
     }
 
-    @Transactional
     public Material create(Material material) {
-        Material newMaterial = new Material();
-        copyMaterialProperties(material, newMaterial);
-        return materialsRepository.save(newMaterial);
+        return materialsRepository.save(material);
     }
 
     public List<Material> getMaterialsByName(String word) {
