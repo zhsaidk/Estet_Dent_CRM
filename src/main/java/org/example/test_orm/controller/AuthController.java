@@ -51,7 +51,7 @@ public class AuthController {
                                BindingResult bindingResult,
                                RedirectAttributes redirectAttributes) {
         if (!bindingResult.hasErrors()) {
-            authService.save(doctor);
+            authService.saveDoctor(doctor);
             return "redirect:/login";
         }   else {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());

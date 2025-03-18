@@ -29,17 +29,17 @@ public class TokenService {
         key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateAccessToken(String username) {
+    protected String generateAccessToken(String username) {
         return generateToken(username,  accessToken * 1000);    // Умножение для преобразования времени в секунды
     }
 
-    public String generateRefreshToken(String username) {
+    protected String generateRefreshToken(String username) {
         return generateToken(username, refreshToken * 1000);    // Умножение для преобразования времени в секунды
     }
 
-     private String generateToken(String userID, long expiration) {
+     private String generateToken(String username, long expiration) {
         return Jwts.builder()
-                .subject(userID)
+                .subject(username)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)

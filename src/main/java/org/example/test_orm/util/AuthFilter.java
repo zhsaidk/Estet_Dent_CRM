@@ -29,31 +29,26 @@ public class AuthFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
     private final AuthService authService;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         Map<String, String> mapOfCookie = setCookieIfExist(request.getCookies());
         try {
             if (mapOfCookie.containsKey(ACCESS_TOKEN)) {
-                String userId = authService.parseToken((mapOfCookie.get(ACCESS_TOKEN)));
-                log.info("userID from {} = {}", ACCESS_TOKEN, userId);
-                authenticateUser(userId, request);
+                String username = authService.parseToken((mapOfCookie.get(ACCESS_TOKEN)));
+                authenticateUser(username, request);
             }   else if(mapOfCookie.containsKey(REFRESH_TOKEN)) {
-                String userId = authService.parseToken(REFRESH_TOKEN);
-//                Doctor doc = authService.getDoctorById(userId);
-                log.info("userID from {} = {}", REFRESH_TOKEN, userId);
-                Token token = new Token(authService.generateAccessToken(userId),
-                        authService.generateRefreshToken(userId));
-//                authService.saveRefreshToken(token);
-                authService.setAuthCookies(response, token);
-                authenticateUser(userId, request);
+                String oldToken = mapOfCookie.get(REFRESH_TOKEN);
+                Doctor doctor = authService.getDoctorByLogin(authService.parseToken(oldToken));
+                Token newToken = authService.refreshTokens(doctor, oldToken);
+                authService.setAuthCookies(response, newToken);
+                authenticateUser(doctor.getLogin(), request);
             }
             filterChain.doFilter(request, response);
         }   catch (JwtException e) {
-            log.info("Invalid JWT token");
-            request.setAttribute("error_message", "Доступ запрещен: неверный JWT токен.");
-            request.getRequestDispatcher("/logout").forward(request, response);
+            log.warn(e.getMessage(), e);
+            authService.clearTokenCookie(response);
+            throw new JwtException(e.getMessage());
         }
     }
     private Map<String, String> setCookieIfExist(Cookie[] cookies) {
@@ -78,4 +73,6 @@ public class AuthFilter extends OncePerRequestFilter {
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
+
+
 }

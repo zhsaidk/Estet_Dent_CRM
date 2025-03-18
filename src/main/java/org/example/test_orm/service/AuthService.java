@@ -1,5 +1,6 @@
 package org.example.test_orm.service;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -35,13 +37,12 @@ public class AuthService implements UserDetailsService{
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         Doctor doctor = getDoctorByLogin(login);
-        String doctorId = String.valueOf(doctor.getDoctorID());
-        User user = new User(doctorId, doctor.getPassword(), Set.of(doctor.getRole()));
+        User user = new User(login, doctor.getPassword(), Set.of(doctor.getRole()));
         log.info("Загрузка найденного пользователя в UserDetails");
         return user;
     }
 
-    public void save(Doctor doctor) {
+    public void saveDoctor(Doctor doctor) {
         try {
             doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
             doctorRepository.save(doctor);
@@ -51,22 +52,38 @@ public class AuthService implements UserDetailsService{
             throw new DoctorSaveException("Не удалось сохранить данные");
         }
     }
-//    @Transactional
-//    public void saveRefreshToken(Token token) {
-//        try {
-//            Optional<Token> oldToken = tokenRepository.getTokenByDoctor(token.getDoctor());
-//            if(oldToken.isPresent()) {
-//                tokenRepository.delete(oldToken.get());
-//                log.info("Удаление страого токена");
-//            }
-////            tokenRepository.save(token);
-////            log.info("Создание нового токена");
-//
-//        } catch (DataIntegrityViolationException e) {
-//            throw new DataIntegrityViolationException(e.getMessage());
-//        }
-//    }
 
+    public Token createTokenByDoctor(Doctor doctor) {
+        String username = doctor.getLogin();
+        return new Token(tokenService.generateAccessToken(username),
+                tokenService.generateRefreshToken(username), doctor);
+    }
+
+    public void saveToken(Token token) {
+        tokenRepository.save(token);
+    }
+
+    @Transactional
+    public Token refreshTokens(Doctor doctor, String refreshToken) {
+        String username = doctor.getLogin();
+        Optional<List<Token>> optionalTokens = tokenRepository.findTokensByDoctorLogin(username);
+        if (optionalTokens.isPresent()) {
+            for (Token token: optionalTokens.get()) {
+                if(token.getRefreshToken().equals(refreshToken)) {
+                    tokenRepository.delete(token);
+                    Token newToken = createTokenByDoctor(doctor);
+                    tokenRepository.save(newToken);
+                    return newToken;
+                }
+            }
+        }
+        log.warn("Токен пользователя: {} отличается от сохраненного", username);
+        throw new JwtException("Токен пользователя: " + username + " отличается от сохраненного");
+    }
+
+    public String parseToken(String token) {
+        return tokenService.parseToken(token);
+    }
 
     public void setAuthCookies(HttpServletResponse response, Token token) {
         cookieService.setAuthCookies(response, token);
@@ -76,19 +93,7 @@ public class AuthService implements UserDetailsService{
         cookieService.clearTokenCookie(response);
     }
 
-    public String generateAccessToken(String userID) {
-        return tokenService.generateAccessToken(userID);
-    }
-
-    public String generateRefreshToken(String userID) {
-        return tokenService.generateRefreshToken(userID);
-    }
-
-    public String parseToken(String token) {
-        return tokenService.parseToken(token);
-    }
-
-    private Doctor getDoctorByLogin(String login) {
+    public Doctor getDoctorByLogin(String login) {
         Optional<Doctor> optionalDoctor = doctorRepository.findDoctorByLogin(login);
         if (optionalDoctor.isEmpty()) {
             log.warn("Пользователь не найден");
@@ -96,14 +101,4 @@ public class AuthService implements UserDetailsService{
         }
         return optionalDoctor.get();
     }
-
-    public Doctor getDoctorById(String id) {
-        Optional<Doctor> optionalDoctor = doctorRepository.findById(Long.parseLong(id));
-        if (optionalDoctor.isEmpty()) {
-            log.warn("Пользователь не найден");
-            throw new UsernameNotFoundException("Доктор не найден");
-        }
-        return optionalDoctor.get();
-    }
-
 }

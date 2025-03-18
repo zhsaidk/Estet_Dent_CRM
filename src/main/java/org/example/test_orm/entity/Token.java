@@ -2,18 +2,22 @@ package org.example.test_orm.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
+@Setter
 public class Token {
 
     public Token() {
     }
 
-    public Token(String accessToken , String refreshToken) {
+    public Token(String accessToken , String refreshToken, Doctor doctor) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-//        this.doctor = doctor;
+        this.doctor = doctor;
     }
 
     @Id
@@ -25,9 +29,10 @@ public class Token {
     @Column(unique = true)
     private String refreshToken;
 
-//    @ManyToOne()
-//    @JoinColumn(name = "user_id")
-//    private Doctor doctor;
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "user_login", referencedColumnName = "login", nullable = false)
+    private Doctor doctor;
 
 
 }
