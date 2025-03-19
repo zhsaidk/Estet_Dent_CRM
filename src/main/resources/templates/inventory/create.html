@@ -1,0 +1,55 @@
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание материала</title>
+    <link rel="stylesheet" th:href="@{/css/inventory/create.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Создание материала</h1>
+
+    <div id="messages">
+        <div id="validationErrorsContainer" class="message error">
+            <div id="validationErrors"></div>
+        </div>
+        <div id="errorMessages" class="message error"></div>
+        <div id="successMessage" class="message success"></div>
+    </div>
+
+    <form id="materialForm" th:action="@{/materials/create}" method="post">
+        <div class="form-group">
+            <label for="name">Название</label>
+            <input type="text" name="name" id="name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="producer">Производитель</label>
+            <select name="producer" id="producer" required>
+                <option value="">Выберите производителя</option>
+                <option th:each="producer: ${producers}"
+                        th:value="${producer.id}"
+                        th:text="${producer.name}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="count">Количество</label>
+            <input type="number" name="count" id="count" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <label for="price">Цена</label>
+            <input type="number" name="price" id="price" min="0" step="0.01" required>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn primary">Создать</button>
+            <button type="button" id="addProducer" class="btn secondary">Добавить производителя</button>
+            <button type="button" id="backButton" class="btn">Назад</button>
+        </div>
+    </form>
+</div>
+<script th:src="@{/js/inventory/create.js}"></script>
+</body>
+</html>

@@ -101,4 +101,8 @@ public class AuthService implements UserDetailsService{
         }
         return optionalDoctor.get();
     }
+
+    public boolean isLoginTaken(String login){
+        return doctorRepository.findDoctorByLogin(login).isPresent();
+    }
 }

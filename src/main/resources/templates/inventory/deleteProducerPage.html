@@ -1,0 +1,31 @@
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Удаление производителя</title>
+    <link rel="stylesheet" th:href="@{/css/inventory/deleteProducer.css}">
+</head>
+<body>
+<div class="container">
+    <div id="message" class="message" style="display: none" th:if="${message}" th:text="${message}"></div>
+    <div id="errorMessage" class="error-message" style="display: none" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <form id="deleteForm" th:action="@{/producer/delete}" method="post">
+        <div class="form-group">
+            <label for="producerId">Производитель</label>
+            <select name="producerId" id="producerId">
+                <option value="">Выберите производителя</option>
+                <option th:each="producer : ${producers}"
+                        th:value="${producer.id}"
+                        th:text="${producer.name}"></option>
+            </select>
+        </div>
+        <div class="btn-container">
+            <button type="submit" class="btn btn-danger">Удалить</button>
+            <button type="button" onclick="window.location.href='/producer'" class="btn btn-secondary">Назад</button>
+        </div>
+    </form>
+</div>
+<script th:src="@{/js/inventory/deleteProducer.js}"></script>
+</body>
+</html>

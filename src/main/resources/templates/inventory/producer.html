@@ -1,0 +1,47 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание производителя</title>
+    <link rel="stylesheet" th:href="@{/css/inventory/producer.css}">
+</head>
+<body>
+<h1 class="page-title">Создание производителя</h1>
+
+<!-- Error messages -->
+<div th:if="${errors}">
+    <p th:each="error: ${errors}"
+       class="error-message"
+       th:text="${error.getDefaultMessage()}"></p>
+</div>
+
+<div th:if="${errorMessage}">
+    <p class="error-message" th:text="${errorMessage}"></p>
+</div>
+
+<!-- Success message -->
+<div th:if="${message}">
+    <p class="success-message" th:text="${message}"></p>
+</div>
+
+<!-- Producer creation form -->
+<form th:action="@{/producer/add}" method="post">
+    <div class="form-group">
+        <label for="name">Название производителя</label>
+        <input type="text"
+               name="name"
+               id="name"
+               placeholder="Введите название производителя"
+               required>
+    </div>
+
+    <div class="buttons-container">
+        <button type="submit">Создать</button>
+        <a href="/materials/create"><button type="button" class="button-secondary">Назад</button></a>
+        <a href="/producer/delete"><button type="button" class="button-danger">Удалить</button></a>
+    </div>
+</form>
+
+<script th:src="@{/js/inventory/producer.js}"></script>
+</body>
+</html>
