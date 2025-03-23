@@ -1,39 +1,108 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Список пользователей</title>
-    <script type="text/javascript" th:src="@{/js/clients/clients.js}"></script> <!--TODO не добавляется js файл (Самвел)-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пациенты</title>
+    <link rel="stylesheet" href="/css/patients/patients.css">
 </head>
 <body>
-<h2>Список пользователей</h2>
+<nav class="top-nav">
+    <div class="nav-items">
+        <a href="#" class="nav-item company-logo">
+            <svg class="nav-icon dent-icon" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-4-8c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm4 0c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm4 0c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1z"/>
+            </svg>
+            <span>DENT</span>
+        </a>
+        <a href="#" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+            </svg>
+            Расписание
+        </a>
+        <a href="/patients" class="nav-item active">
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+            </svg>
+            Пациенты
+        </a>
+        <a href="#" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+            </svg>
+            Отчет
+        </a>
+        <a href="/materials" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            Материалы
+        </a>
+    </div>
+    <div class="nav-profile">
+        <span>Doctor</span>
+        <button class="profile-btn">👤</button>
+    </div>
+</nav>
 
-<!-- Кнопка для создания нового пользователя -->
-<a href="/patients/create">
-    <button>Создать нового пользователя</button>
-</a>
+<main>
+    <div class="controls">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Поиск пациентов">
+            <button class="search-btn">🔍</button>
+        </div>
+        <div class="filter-dropdown">
+            <button type="button" class="filter-toggle">Фильтровать ▼</button>
+            <form class="filter-content">
+                <div class="filter-group">
+                    <label>Дата рождения</label>
+                    <input type="date" name="birthDate">
+                </div>
+                <div class="filter-group">
+                    <label>Телефон</label>
+                    <input type="tel" name="phone" placeholder="Введите номер телефона">
+                </div>
+                <button type="submit" class="apply-filter">Применить</button>
+            </form>
+        </div>
+        <a href="/patients/create" class="create-btn">
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            Создать
+        </a>
+    </div>
 
-<p><span th:text="${error_message}" id="message"></span></p>
+    <div id="message"></div>
 
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Имя</th>
-        <th>Адрес</th>
-        <th>Телефон</th>
-        <th>Дата рождения</th>
-    </tr>
-    <tr th:each="patient : ${patients}">
-        <td th:text="${patient.ID}"></td>
-        <td th:text="${patient.name}"></td>
-        <td th:text="${patient.address}"></td>
-        <td th:text="${patient.telephoneNumber}"></td>
-        <td th:text="${patient.birthDate}"></td>
-        <td>
-            <a th:href="@{/patients/{id}(id=${patient.ID})}"><button>Подробнее</button></a>
-            <button type="button" th:onclick="|deleteUser('${patient.ID}')|">Удалить</button>
-        </td>
-    </tr>
-</table>
+    <div class="table-container">
+        <table class="patients-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Имя</th>
+                <th>Адрес</th>
+                <th>Телефон</th>
+                <th>Дата рождения</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="patient : ${patients}">
+                <td th:text="${patient.ID}"></td>
+                <td th:text="${patient.name}"></td>
+                <td th:text="${patient.address}"></td>
+                <td th:text="${patient.telephoneNumber}"></td>
+                <td th:text="${patient.birthDate}"></td>
+                <td class="action-buttons">
+                    <a th:href="@{/patients/{id}(id=${patient.ID})}" class="action-btn view-btn">👁️</a>
+                    <button class="action-btn delete-btn" th:onclick="|deleteUser('${patient.ID}')|">🗑️</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<script src="/js/patients/patients.js"></script>
 </body>
 </html>
