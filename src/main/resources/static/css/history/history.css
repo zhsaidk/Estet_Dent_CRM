@@ -79,31 +79,16 @@ input:focus {
 
 .error-message {
     display: none;
+    background-color: #fff5f5;
+    color: #dc3545;
     padding: 0.75rem;
     border-radius: 4px;
     margin-bottom: 1rem;
+    border: 1px solid #fcc;
 }
 
 .error-message.visible {
     display: block;
-}
-
-.error-message:empty {
-    display: none; /* Скрываем, если блок пустой */
-}
-
-/* Ошибки */
-.error-message.error {
-    background-color: #fff5f5;
-    color: #dc3545;
-    border: 1px solid #fcc;
-}
-
-/* Успех */
-.error-message.success {
-    background-color: #f0fff0;
-    color: #28a745;
-    border: 1px solid #90ee90;
 }
 
 .login-form {

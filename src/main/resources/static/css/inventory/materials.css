@@ -91,6 +91,19 @@ main {
     width: 300px;
 }
 
+.search-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-btn:hover {
+    background: #3267d6; /* Темнее основного цвета для эффекта hover */
+}
+
 .create-btn {
     background: var(--success-color);
     color: white;

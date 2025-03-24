@@ -1,32 +1,46 @@
-<!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание истории пациента</title>
+    <link rel="stylesheet" href="/css/history/history.css">
 </head>
-    <body>
-        <span th:if="${errors}" style="color: red" th:each="error: ${errors}" th:text="${error.getDefaultMessage}"></span><br/>
+<body>
+<div class="container">
+    <h1>Создание истории пациента</h1>
 
-        <form th:action="@{/history/create}" method="post">
-            <input type="hidden" name="medicalHistoryOfClients" id="patient" th:value="${currentPatientId}">
+    <div id="errors" class="error-container"></div>
 
-            <label for="doctor">Выберите доктора
-                <select name="doctorMedicalHistory" id="doctor">
-                    <option th:each="doctor : ${doctors}" th:text="${doctor.getDoctorName()}" th:value="${doctor.getDoctorID()}"></option>
-                </select>
-            </label><br/>
+    <form id="historyForm" method="post" th:action="@{/history/create/{id}(id=${patientId})}">
+        <input type="hidden" name="medicalHistoryOfClients" id="patient" th:value="${patientId}">
 
-            <label for="complaints"> Причина обращение
-                <input type="text" name="complaints" id="complaints">
-            </label><br/>
+        <div class="form-group">
+            <label for="doctor">Выберите доктора</label>
+            <select name="doctorMedicalHistory" id="doctor" required>
+                <option value="">-- Выберите доктора --</option>
+                <option th:each="doctor : ${doctors}"
+                        th:value="${doctor.doctorID}"
+                        th:text="${doctor.name}"></option>
+            </select>
+        </div>
 
-            <label for="date"> Дата
-                <input type="date" name="date" id="date">
-            </label><br/>
+        <div class="form-group">
+            <label for="complaints">Причина обращения</label>
+            <input type="text" name="complaints" id="complaints" required>
+        </div>
 
-            <button type="submit">Создать</button>
-        </form>
-    </body>
+        <div class="form-group">
+            <label for="date">Дата</label>
+            <input type="date" name="date" id="date" required th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn-submit">Создать</button>
+            <button type="button" class="btn-cancel" id="cancelButton">Отмена</button>
+        </div>
+    </form>
+</div>
+
+<script type="module" th:src="@{/js/history/create_script.js}"></script>
+</body>
 </html>
-

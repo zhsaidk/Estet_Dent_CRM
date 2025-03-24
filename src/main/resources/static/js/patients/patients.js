@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.deleteUser = function(id) {
         if (confirm('Вы уверены, что хотите удалить этого пациента?')) {
             fetch(`/patients/${id}`, {
-                method: 'DELETE'
+                method: 'POST'
             })
                 .then(response => {
                     if (response.ok) {

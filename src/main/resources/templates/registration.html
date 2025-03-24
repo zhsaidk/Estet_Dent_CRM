@@ -1,43 +1,52 @@
-<html lang="ru">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация врача</title>
-    <link rel="stylesheet" href="/css/login/register.css">
+    <link rel="stylesheet" th:href="@{/css/login/register.css}">
 </head>
 <body>
 <div class="container">
-    <h1>Регистрация</h1>
-    <div id="error-message" class="error-message"></div>
-
-    <form id="registrationForm" action="/register" method="post" novalidate>
-        <div class="form-group">
-            <label for="name">Имя:</label>
-            <input type="text" id="name" name="name" required>
+    <div class="register-box">
+        <h2>Регистрация</h2>
+        <div id="error-message"
+             class="error-message"
+             th:classappend="${errors != null or error != null} ? 'error' : (${message != null} ? 'success' : '')"
+             th:if="${errors != null or error != null or message != null}">
+            <span th:if="${errors != null}" th:each="err : ${errors}" th:text="${err.defaultMessage} + ' '"></span>
+            <span th:if="${error != null}" th:text="${error}"></span>
+            <span th:if="${message != null}" th:text="${message}"></span>
         </div>
 
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+        <form id="registrationForm" th:action="@{/register}" method="post" novalidate>
+            <div class="form-group">
+                <label for="name">Имя</label>
+                <input type="text" id="name" name="name" required th:value="${doctor != null ? doctor.name : ''}">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required th:value="${doctor != null ? doctor.email : ''}">
+            </div>
+
+            <div class="form-group">
+                <label for="login">Логин</label>
+                <input type="text" id="login" name="login" required th:value="${doctor != null ? doctor.login : ''}">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+        </form>
+
+        <div class="login-form">
+            <p class="login-text">Есть аккаунт? <a href="/login" class="login-link">Войти</a></p>
         </div>
-
-        <div class="form-group">
-            <label for="login">Логин:</label>
-            <input type="text" id="login" name="login" required>
-        </div>
-
-        <div class="form-group">
-            <label for="password">Пароль:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-
-        <button type="submit">Зарегистрироваться</button>
-    </form>
-
-    <div class="login-link">
-        <p>Есть аккаунт? <a href="/login">Войти</a></p>
     </div>
 </div>
-<script type="module" src="/js/login/register.js"></script>
+<script th:src="@{/js/login/register.js}"></script>
 </body>
 </html>

@@ -8,4 +8,3 @@ document.addEventListener('DOMContentLoaded', function() {
         filterToggle.textContent = isVisible ? 'Фильтровать ▼' : 'Фильтровать ▲';
     });
 });
-

@@ -1,18 +1,123 @@
-<!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система управления пациентами</title>
+    <link rel="stylesheet" href="/css/patients/patient.css">
 </head>
 <body>
-<h1>Client:</h1>
-    <p>Имя: <span th:text="${patient.name}"></span></p>
-    <p>Дата рождения: <span th:text="${patient.birthDate}"></span></p>
-    <p>Адрес: <span th:text="${patient.address}"></span></p>
-    <p>Телефон: <span th:text="${patient.telephoneNumber}"></span></p>
-<a href="/patients"><button>Вернутся</button></a>
+<div class="app-container">
+    <header class="top-nav">
+        <div class="nav-items">
+            <a href="#" class="nav-item company-logo">
+                <svg class="nav-icon dent-icon" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-4-8c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm4 0c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm4 0c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1z"/>
+                </svg>
+                <span>DENT</span>
+            </a>
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+                Расписание
+            </a>
+            <a href="#" class="nav-item active">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                </svg>
+                Пациенты
+            </a>
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+                Отчет
+            </a>
+            <a href="/materials" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+                Материалы
+            </a>
+        </div>
+        <div class="nav-profile">
+            <span>Doctor</span>
+            <button class="profile-btn">👤</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="patient-info">
+            <div class="personal-info">
+                <h2>Пациент: <span th:text="${patient.name}">Виталий Аносыкин</span></h2>
+                <p>
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+                    <strong>Дата рождения:</strong> <span th:text="${patient.getBirthDate()}">23.10.1999</span>
+                </p>
+                <p>
+                    <svg viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.59l2.2-2.21c.28-.26.36-.65.25-1C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1zM12 3v10l3-3h6V3h-9z"/></svg>
+                    <strong>Телефон:</strong> <span th:text="${patient.getTelephoneNumber()}">87014553607</span>
+                </p>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="history">История лечения</div>
+                <div class="tab" data-tab="visits">Визиты</div>
+                <div class="tab" data-tab="finances">Финансы</div>
+                <div class="tab" data-tab="documents">Документы</div>
+            </div>
+
+            <div class="tab-content">
+                <div id="history-content" class="tab-content-item active">
+                    <div class="history-list">
+                        <div th:each="history : ${histories}" class="history-item">
+                            <div class="history-header">
+                                <div class="doctor-info">
+                                    <i class="icon user"></i>
+                                    <span><strong>Доктор: </strong><span th:text="${history.getDoctorMedicalHistory().getName()}">Doctor</span></span>
+                                </div>
+                                <div class="date"><strong>Дата обращения:</strong> <span th:text="${history.getDate()}">15.02.2025</span></div>
+                            </div>
+                            <div class="history-content">
+                                <div class="consultation">
+                                    <h3>Консультация:</h3>
+                                    <p th:text="${history.getComplaints()}">Пациент обратился с целью санации и тд.</p>
+                                </div>
+                                <div class="photos">
+                                    <div class="photo">Различные фото</div>
+                                    <div class="photo">Различные фото</div>
+                                    <div class="photo">Различные фото</div>
+                                </div>
+                            </div>
+                            <div class="toggle-btn down"></div>
+                        </div>
+
+                        <div class="new-entry">
+                            <span>Новый этап</span>
+                            <a th:href="@{/history/create/{id}(id=${patient.getID()})}" class="add-btn" id="createHistoryBtn">+</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="visits-content" class="tab-content-item">
+                    <h3>Информация о визитах</h3>
+                    <p>Здесь будет отображаться информация о визитах пациента.</p>
+                </div>
+
+                <div id="finances-content" class="tab-content-item">
+                    <h3>Финансовая информация</h3>
+                    <p>Здесь будет отображаться финансовая информация пациента.</p>
+                </div>
+
+                <div id="documents-content" class="tab-content-item">
+                    <h3>Документы</h3>
+                    <p>Здесь будут отображаться документы пациента.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script type="module" src="/js/patients/patientScript.js"></script>
 </body>
 </html>

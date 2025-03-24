@@ -1,7 +1,9 @@
 package org.example.test_orm.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.example.test_orm.entity.Patient;
+import org.example.test_orm.service.MedicalHistoryService;
 import org.example.test_orm.service.PatientService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,13 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/patients")
+@RequiredArgsConstructor
 public class PatientController {
 
     private final PatientService patientService;
-
-    public PatientController(PatientService patientService) {
-        this.patientService = patientService;
-    }
+    private final MedicalHistoryService medicalHistoryService;
 
     @GetMapping
     public String getAllPatients(Model model) {
@@ -27,6 +27,7 @@ public class PatientController {
     @GetMapping("/{id}")
     public String getPatient(Model model, @PathVariable long id) {
         model.addAttribute("patient", patientService.getPatient(id));
+        model.addAttribute("histories", medicalHistoryService.getAllByClientId(id));
         return "patient";
     }
 
@@ -43,7 +44,7 @@ public class PatientController {
         return "redirect:/patients";
     }
 
-    @DeleteMapping("/{id}")
+    @PostMapping("/{id}")
     public String delete(@PathVariable long id) {
         patientService.deletePatient(id);
         return "patients";

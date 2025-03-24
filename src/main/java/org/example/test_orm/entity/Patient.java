@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.example.test_orm.annotation.phone.ValidPhone;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Entity
@@ -28,6 +29,10 @@ public class Patient {
 
     @Column(nullable = false)
     private String address;     // Адрес
+
+    // Добавляем обратную связь с MedicalHistory
+    @OneToMany(mappedBy = "medicalHistoryOfClients", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MedicalHistory> medicalHistories;
 
 
 //    private String gender;      // Пол
